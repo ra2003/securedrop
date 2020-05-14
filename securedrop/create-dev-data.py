@@ -15,39 +15,14 @@ import journalist_app
 from sdconfig import config
 from db import db
 from models import Journalist, Reply, Source, Submission
+from specialstrings import submissions
 
-submissions = cycle([
-    'This is a test submission without markup!',
-    'This is a test submission with markup and characters such as \, \\, \', \" and ". ' +  # noqa: W605, E501
-    '<strong>This text should not be bold</strong>!'
-])
 
 replies = cycle([
     'This is a test reply without markup!',
     'This is a test reply with markup and characters such as \, \\, \', \" and ". ' +  # noqa: W605, E501
     '<strong>This text should not be bold</strong>!'
 ])
-
-spcial_submissions = cycle([
-    """~!@#$%^&*()_+{}|:"<>?~!@#$%^&*()_+{}|:"<>?~!@#$%^&*()_+{}|:"<>?~!@#$%""",
-    """Ω≈ç√∫˜µ≤≥÷
-åß∂ƒ©˙∆˚¬…æ
-œ∑´®†¥¨ˆøπ“‘
-¡™£¢∞§¶•ªº–≠
-¸˛Ç◊ı˜Â¯˘¿
-ÅÍÎÏ˝ÓÔÒÚÆ☃
-Œ„´‰ˇÁ¨ˆØ∏”""",
-    """!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!$"""  # noqa: W605, E501
-    """............................................................................................................................							.""",  # noqa: W605,    E501
-
-    """thisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwithoutspacesordashesthisisalongwordwit💩houtspacesordashes""",  # noqa: W605, E501
-
-    """😍😍😍😍🔥🔥🔥🔥🔥🖧Thelastwas3networkedcomuters📟📸longwordwit💩houtspacesordashes"""  # noqa: W605, E501
-
-
-
-            ]
-        )
 
 
 def main(staging=False):
@@ -78,7 +53,7 @@ def main(staging=False):
                                                 last_name="Kent")
 
         # Add test sources and submissions
-        num_sources = int(os.getenv('NUM_SOURCES', 2))
+        num_sources = int(os.getenv('NUM_SOURCES', 43))
         for i in range(1, num_sources + 1):
             if i == 1:
                 # For the first source, the journalist who replied will be deleted
@@ -88,9 +63,6 @@ def main(staging=False):
                 continue
             create_source_and_submissions(i, num_sources)
 
-        client_test = int(os.getenv('CLIENT_TEST_DATA', 0))
-        for i in range(1, client_test):
-            create_source_and_submissions(i, client_test, client_test_data=True)
         # Now let us delete one journalist
         db.session.delete(journalist_tobe_deleted)
         db.session.commit()
@@ -117,7 +89,7 @@ def add_test_user(username, password, otp_secret, is_admin=False,
 
 
 def create_source_and_submissions(
-    source_index, source_count, num_submissions=2, num_replies=2, journalist_who_replied=None, client_test_data=False  # noqa: W605, E501
+    source_index, source_count, num_submissions=2, num_replies=2, journalist_who_replied=None  # noqa: W605, E501
 ):
     # Store source in database
     codename = current_app.crypto_util.genrandomid()
@@ -135,10 +107,7 @@ def create_source_and_submissions(
     # Generate some test submissions
     for _ in range(num_submissions):
         source.interaction_count += 1
-        if client_test_data:
-            submission_text = next(spcial_submissions)
-        else:
-            submission_text = next(submissions)
+        submission_text = next(submissions)
         fpath = current_app.storage.save_message_submission(
             source.filesystem_id,
             source.interaction_count,
