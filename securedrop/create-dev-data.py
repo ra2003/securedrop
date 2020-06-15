@@ -52,8 +52,12 @@ def main(staging=False):
                                                 first_name="Clark",
                                                 last_name="Kent")
 
+        NUM_SOURCES = os.getenv('NUM_SOURCES', 2)
+        if NUM_SOURCES == "ALL":
+            # We want all strings
+            NUM_SOURCES = 43
         # Add test sources and submissions
-        num_sources = int(os.getenv('NUM_SOURCES', 43))
+        num_sources = int(NUM_SOURCES)
         for i in range(1, num_sources + 1):
             if i == 1:
                 # For the first source, the journalist who replied will be deleted
