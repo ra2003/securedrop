@@ -143,11 +143,14 @@ Nunc gravida, lorem ut volutpat malesuada, neque mi sodales massa, ut malesuada 
 ⒯⒣⒠ ⒬⒰⒤⒞⒦ ⒝⒭⒪⒲⒩ ⒡⒪⒳ ⒥⒰⒨⒫⒮ ⒪⒱⒠⒭ ⒯⒣⒠ ⒧⒜⒵⒴ ⒟⒪⒢""",  # noqa: W605, E501
 ]
 
-submissions = cycle(["""This is a test submission without markup!""",
+submission_list = ["""This is a test submission without markup!""",
     """This is a test submission with markup and characters such as \, \\, \', \" and ". """ +  # noqa: W605, E501
-    """<strong>This text should not be bold</strong>!"""].extend(strings)
-)
+    """<strong>This text should not be bold</strong>!"""]
+submission_list.extend(strings)
+submissions = cycle(submission_list)
 
-replies = cycle(['This is a test reply without markup!',
+replies_list = ['This is a test reply without markup!',
     'This is a test reply with markup and characters such as \, \\, \', \" and ". ' +  # noqa: W605, E501
-    '<strong>This text should not be bold</strong>!'].extend(strings))
+    '<strong>This text should not be bold</strong>!']
+replies_list.extend(strings)
+replies = cycle(replies_list)
